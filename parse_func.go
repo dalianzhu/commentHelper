@@ -6,15 +6,15 @@ import (
     "strings"
 )
 
-func ParseFunc(text string) []*WillCommentLine {
+func ParseFunc(text string) []*NeedCommentLine {
     // func (r *ResenderMsg) IsSendCtx() context.Context {
     re, err := regexp.Compile(`^func\s+([A-Z][a-zA-Z0-9_-]+)\(|^func\s*\([a-zA-Z0-9]+\s+[*a-zA-Z0-9]+\)\s+([A-Z][a-zA-Z0-9_-]+)`)
     if err != nil {
         log.Println(err)
-        return []*WillCommentLine{}
+        return []*NeedCommentLine{}
     }
     lines := strings.Split(text, "\n")
-    willComments := make([]*WillCommentLine, 0)
+    willComments := make([]*NeedCommentLine, 0)
     for i, line := range lines {
         ret := re.FindAllStringSubmatch(line, -1)
         if len(ret) >= 1 {
@@ -28,7 +28,7 @@ func ParseFunc(text string) []*WillCommentLine {
                 }
 
                 log.Printf("func name:%v\n", funcName)
-                tp := new(WillCommentLine)
+                tp := new(NeedCommentLine)
                 tp.Name = funcName
                 tp.OriginLineNo = i
                 willComments = append(willComments, tp)
@@ -38,8 +38,8 @@ func ParseFunc(text string) []*WillCommentLine {
     return willComments
 }
 
-func filterRegex(re *regexp.Regexp, lines []string) []*WillCommentLine {
-    willComments := make([]*WillCommentLine, 0)
+func filterRegex(re *regexp.Regexp, lines []string) []*NeedCommentLine {
+    willComments := make([]*NeedCommentLine, 0)
     for i, line := range lines {
         ret := re.FindAllStringSubmatch(line, -1)
         if len(ret) >= 1 {
@@ -55,7 +55,7 @@ func filterRegex(re *regexp.Regexp, lines []string) []*WillCommentLine {
                 }
 
                 log.Printf("func name:%v\n", funcName)
-                tp := new(WillCommentLine)
+                tp := new(NeedCommentLine)
                 tp.Name = funcName
                 tp.OriginLineNo = i
                 willComments = append(willComments, tp)

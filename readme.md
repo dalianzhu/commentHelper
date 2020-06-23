@@ -46,9 +46,11 @@ func (t *TStruct) Get() (*TSnmpSubsvr, error) {
 ## usage
 ```
 git clone https://github.com/dalianzhu/commentHelper.git
-go build https://github.com/dalianzhu/commentHelper.git
+cd commentHelper
+go build github.com/dalianzhu/commentHelper
 # 得到 commentHelper
 mv commentHelper /usr/bin
+chmod 777 /usr/bin/commentHelper
 # 使用
 commentHelper /path/file.go
 ```

@@ -7,8 +7,8 @@ import (
     "strings"
 )
 
-// WillCommentLine 这一行需要加注释
-type WillCommentLine struct {
+// NeedCommentLine 这一行需要加注释
+type NeedCommentLine struct {
     OriginLineNo int
     Name         string
 }
@@ -16,39 +16,44 @@ type WillCommentLine struct {
 func ExtractText(text string) string {
     originTextLines := strings.Split(text, "\n")
 
-    isInCommentMap := make(map[int]bool)
+    // 需要加注释的一行已经有注释或者在注释中，处理这种情况
+    inCommentMap := make(map[int]bool)
     isInComment := false
     for i, line := range originTextLines {
         if isInComment {
-            isInCommentMap[i] = true
+            inCommentMap[i] = true
         }
         trimLine := strings.Trim(line, " ")
         if strings.HasPrefix(trimLine, "//") {
             log.Printf("line:%v is in comment", i)
-            isInCommentMap[i] = true
+            inCommentMap[i] = true
         }
         if strings.HasPrefix(trimLine, "/*") {
             // 进入大注释
-            isInCommentMap[i] = true
+            inCommentMap[i] = true
             isInComment = true
         }
         if strings.HasSuffix(trimLine, "*/") {
-            isInCommentMap[i] = true
+            inCommentMap[i] = true
             isInComment = false
         }
     }
 
-    willComments := ParseFunc(text)
-    willComments = append(willComments, ParseStruct(text)...)
-    willComments = append(willComments, ParseType(text)...)
-    sort.Slice(willComments, func(i, j int) bool {
-        return willComments[i].OriginLineNo < willComments[j].OriginLineNo
+    // 获取所有需要加注释的line
+    needCommentLines := ParseFunc(text)
+    needCommentLines = append(needCommentLines, ParseStruct(text)...)
+    needCommentLines = append(needCommentLines, ParseType(text)...)
+    sort.Slice(needCommentLines, func(i, j int) bool {
+        return needCommentLines[i].OriginLineNo < needCommentLines[j].OriginLineNo
     })
+
     offset := 0
-    for _, c := range willComments {
+    for _, c := range needCommentLines {
         willInsertLine := c.OriginLineNo + offset
         log.Printf("willInsertLine:%v", willInsertLine)
-        _, ok := isInCommentMap[c.OriginLineNo-1]
+
+        // 虽然它满足加注释的类型，但是在原文件中，它已经有注释了
+        _, ok := inCommentMap[c.OriginLineNo-1]
         if !ok {
             comment := fmt.Sprintf("// %v ...", c.Name)
             originTextLines = InsertSlice(originTextLines, willInsertLine, comment)
