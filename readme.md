@@ -42,8 +42,9 @@ func (t *TStruct) Get() (*TSnmpSubsvr, error) {
 所以，用来骗骗机器。
 
 其次，先写个注释模版在这提醒下，说不定你心情好的时候，也会补充下嘛。
-```
+
 ## usage
+```
 git clone https://github.com/dalianzhu/commentHelper.git
 go build https://github.com/dalianzhu/commentHelper.git
 # 得到 commentHelper
