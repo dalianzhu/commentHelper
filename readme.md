@@ -41,7 +41,7 @@ func (t *TStruct) Get() (*TSnmpSubsvr, error) {
 因为最近部门在搞代码评比，扫描出来公有变量不加注释是会报警的。
 所以，用来骗骗机器。
 
-其次，先写个注释模版在这提醒下，说不定你心情好的时候，也会补充下嘛。
+其次，先自动生成个注释在这占个位，说不定你心情好的时候，也会补充下嘛。
 
 ## usage
 ```
@@ -53,4 +53,8 @@ mv commentHelper /usr/bin
 chmod 777 /usr/bin/commentHelper
 # 使用
 commentHelper /path/file.go
+
+# 对目录
+commentHelper /path/
+# 将处理所有/path/下的go文件，忽略.pb.go
 ```
