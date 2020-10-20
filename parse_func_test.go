@@ -5,6 +5,7 @@ import (
     "testing"
 )
 
+// TestParseFunc ...
 func TestParseFunc(t *testing.T) {
 
     text := `package controller
@@ -19,6 +20,7 @@ import (
 
 // 一个滑动窗口的resender
 
+// NewResendMsg ...
 func NewResendMsg(ctx context.Context, uuid string, timestamp int64, data interface{}) *ResenderMsg {
     r := &ResenderMsg{}
     r.Uuid = uuid
@@ -42,10 +44,12 @@ func (r *ResenderMsg) isSendCtx() context.Context {
     return r.isSend
 }
 
+// IsSendCancel ...
 func (r *ResenderMsg) IsSendCancel() {
     r.isSendCancel()
 }
 
+// NewMsgResender ...
 func NewMsgResender(ctx context.Context, subId int, sender func(data *ResenderMsg) error) *MsgResender {
     s := new(MsgResender)
     s.ctx = ctx
@@ -57,6 +61,8 @@ func NewMsgResender(ctx context.Context, subId int, sender func(data *ResenderMs
     return s
 }
 
+// MsgResender ...
+// MsgResender ...
 type MsgResender struct {
     subId       int
     dataMap     sync.Map
@@ -66,16 +72,19 @@ type MsgResender struct {
     ctx         context.Context
 }
 
+// UnSendCount ...
 func (m *MsgResender) UnSendCount() int64 {
     return m.unsendCount
 }
 
+// Wait ...
 func (m *MsgResender) Wait() {
     for m.unsendCount != 0 {
         time.Sleep(time.Second)
     }
 }
 
+// Put ...
 func (m *MsgResender) Put(key string, data *ResenderMsg) {
     data.Uuid = key
     atomic.AddInt64(&m.unsendCount, 1)
@@ -87,6 +96,7 @@ func (m *MsgResender) Put(key string, data *ResenderMsg) {
 
 }
 
+// Pop ...
 func (m *MsgResender) Pop(f func(key string, data *ResenderMsg) bool) bool {
     var ret bool
     select {
@@ -98,6 +108,7 @@ func (m *MsgResender) Pop(f func(key string, data *ResenderMsg) bool) bool {
     return ret
 }
 
+// IsSend ...
 func (m *MsgResender) IsSend(key string) {
     v, ok := m.dataMap.Load(key)
     if !ok {
@@ -114,6 +125,7 @@ func (m *MsgResender) IsSend(key string) {
     atomic.AddInt64(&m.unsendCount, -1)
 }
 
+// Maintenance ...
 func (m *MsgResender) Maintenance() {
     m.dataMap.Range(func(key, value interface{}) bool {
         data, ok := value.(*ResenderMsg)
@@ -144,6 +156,7 @@ func (m *MsgResender) Maintenance() {
     text = `
 // 一个滑动窗口的resender
 
+// NewResendMsg ...
 func NewResendMsg(ctx context.Context, uuid string, timestamp int64, data interface{}) *ResenderMsg {
     r := &ResenderMsg{}
     r.Uuid = uuid

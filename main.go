@@ -12,6 +12,7 @@ func main() {
 	path := os.Args[1]
 	if !Exists(path) {
 		log.Println("path is not exists")
+		return
 	}
 	if IsDir(path) {
 		err := filepath.Walk(path,
@@ -23,7 +24,6 @@ func main() {
 					log.Println(path)
 					commentFile(path)
 				}
-
 				return nil
 			})
 		if err != nil {
@@ -31,7 +31,9 @@ func main() {
 		}
 	} else if IsFile(path) {
 		log.Println(path)
-		commentFile(path)
+		if strings.HasSuffix(path, ".go") && !strings.HasSuffix(path, ".pb.go") {
+			commentFile(path)
+		}
 	}
 }
 
@@ -42,7 +44,7 @@ func commentFile(path string) {
 		return
 	}
 	text := string(textBytes)
-	text = ExtractText(text)
+	text = AddCommentToText(text)
 	err = ioutil.WriteFile(path, []byte(text), 0666)
 	if err != nil {
 		log.Println(err)

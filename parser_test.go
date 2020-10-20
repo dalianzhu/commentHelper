@@ -1,12 +1,13 @@
 package main
 
 import (
-    "log"
-    "testing"
+	"log"
+	"testing"
 )
 
+// TestExtractText ...
 func TestExtractText(t *testing.T) {
-    text := `package controller
+	text := `package controller
 
 import (
     "context"
@@ -16,6 +17,9 @@ import (
     "sync/atomic"
     "time"
 )
+
+type abc *string
+type Abc *string
 
 // 一个滑动窗口的resender
 
@@ -142,6 +146,6 @@ func (m *MsgResender) Maintenance() {
         }
     })
 }`
-    ret := ExtractText(text)
-    log.Println(ret)
+	ret := AddCommentToText(text)
+	log.Println(ret)
 }
