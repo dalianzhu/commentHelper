@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go/format"
 	"io/ioutil"
 	"log"
 	"os"
@@ -45,7 +46,15 @@ func commentFile(path string) {
 	}
 	text := string(textBytes)
 	text = AddCommentToText(text)
-	err = ioutil.WriteFile(path, []byte(text), 0666)
+
+	ret := wrapLine(text)
+	fmtRet, err := format.Source([]byte(ret))
+	if err != nil {
+		log.Printf("wrap line error:%v", err)
+		return
+	}
+
+	err = ioutil.WriteFile(path, fmtRet, 0666)
 	if err != nil {
 		log.Println(err)
 		return

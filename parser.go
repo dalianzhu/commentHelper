@@ -72,3 +72,11 @@ func InsertSlice(ss []string, index int, inserted string) []string {
 	ss = append(ss, rear...)
 	return ss
 }
+
+// InsertSliceByte ...
+func InsertSliceByte(ss []byte, index int, inserted byte) []byte {
+	rear := append([]byte{}, ss[index:]...)
+	ss = append(ss[0:index], inserted)
+	ss = append(ss, rear...)
+	return ss
+}
