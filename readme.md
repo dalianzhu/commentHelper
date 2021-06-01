@@ -1,9 +1,14 @@
 ## 给go加注释
 这玩意用来干嘛的呢？
 给go文件加一些其实没必要的注释。放心，如果原来有注释，不会重复添加，安全无污染
+而且，超过120个字的行，会尝试折行，也就是在非string/注释的 `,` `(`后添加换行符。
+
 比如：
 ```
 const LineID = "lineId"
+
+const HandleFullErr = QueueErrType("handleFullError","handleFullError","handleFullError","handleFullError","handleFullError","handleFullError")
+
 
 func Init() {
 ...
@@ -21,6 +26,11 @@ commentHelper /path/file.go
 ```
 // LineID ...
 const LineID = "lineId"
+
+// HandleFullErr ...
+const HandleFullErr = QueueErrType(
+    "handleFullError",
+    "handleFullError", "handleFullError", "handleFullError", "handleFullError", "handleFullError")
 
 // Init ...
 func Init() {
