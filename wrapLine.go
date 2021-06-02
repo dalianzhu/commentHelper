@@ -2,12 +2,14 @@ package main
 
 import (
 	"strings"
+
+	stackLib "github.com/golang-collections/collections/stack"
 )
 
 func wrapLine(text string) string {
 	arr := strings.Split(text, "\n")
 	lines := len(arr)
-	stack := new(Stack)
+	stack := stackLib.New()
 
 	for lineNo := 0; lineNo < lines; {
 		i := 0
@@ -33,7 +35,7 @@ func wrapLine(text string) string {
 			}
 
 			if currentChar == '`' || currentChar == '"' {
-				if stack.Len() != 0 && stack.Top() == currentChar {
+				if stack.Len() != 0 && stack.Peek() == currentChar {
 					stack.Pop()
 				} else {
 					stack.Push(currentChar)
@@ -81,8 +83,8 @@ func (s *Stack) Pop() byte {
 	return v
 }
 
-// Top ...
-func (s *Stack) Top() byte {
+// Peek ...
+func (s *Stack) Peek() byte {
 	n := len(s.inner) - 1 // Top element
 	v := s.inner[n]
 	return v

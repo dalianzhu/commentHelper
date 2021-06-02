@@ -30,7 +30,7 @@ func ParseFunc(text string) []*NeedCommentLine {
 					funcName = matchArr[2]
 				}
 
-				log.Printf("func name:%v\n", funcName)
+				// log.Printf("func name:%v\n", funcName)
 				tp := new(NeedCommentLine)
 				tp.Name = funcName
 				tp.OriginLineNo = i
@@ -56,7 +56,7 @@ func filterRegex(re *regexp.Regexp, lines []string) []*NeedCommentLine {
 					}
 				}
 
-				log.Printf("func name:%v\n", funcName)
+				// log.Printf("func name:%v\n", funcName)
 				tp := new(NeedCommentLine)
 				tp.Name = funcName
 				tp.OriginLineNo = i

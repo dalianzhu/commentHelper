@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"sort"
 	"strings"
 )
@@ -26,7 +25,7 @@ func AddCommentToText(text string) string {
 		}
 		trimLine := strings.Trim(line, " ")
 		if strings.HasPrefix(trimLine, "//") {
-			log.Printf("line:%v is in comment", i)
+			// log.Printf("line:%v is in comment", i)
 			inCommentMap[i] = true
 		}
 		if strings.HasPrefix(trimLine, "/*") {
@@ -51,7 +50,7 @@ func AddCommentToText(text string) string {
 	offset := 0
 	for _, c := range needCommentLines {
 		willInsertLine := c.OriginLineNo + offset
-		log.Printf("willInsertLine:%v", willInsertLine)
+		// log.Printf("willInsertLine:%v", willInsertLine)
 
 		// 虽然它满足加注释的类型，但是在原文件中，它已经有注释了
 		_, ok := inCommentMap[c.OriginLineNo-1]
