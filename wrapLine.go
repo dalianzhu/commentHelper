@@ -18,7 +18,7 @@ func wrapLine(text string) string {
 		end := len(line)
 		content := []byte(line)
 		isOverLength := false
-		if len(line) < 115 {
+		if len(line) > 115 {
 			isOverLength = true
 		}
 		inComment := false
