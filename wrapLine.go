@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"strings"
 
 	stackLib "github.com/golang-collections/collections/stack"
@@ -16,9 +17,9 @@ func wrapLine(text string) string {
 		line := arr[lineNo]
 		end := len(line)
 		content := []byte(line)
+		isOverLength := false
 		if len(line) < 115 {
-			lineNo++
-			continue
+			isOverLength = true
 		}
 		inComment := false
 		for {
@@ -36,8 +37,10 @@ func wrapLine(text string) string {
 
 			if currentChar == '`' || currentChar == '"' {
 				if stack.Len() != 0 && stack.Peek() == currentChar {
+					log.Printf("pop %v\n", string(currentChar))
 					stack.Pop()
 				} else {
+					log.Printf("push %v\n", string(currentChar))
 					stack.Push(currentChar)
 				}
 			}
@@ -46,7 +49,8 @@ func wrapLine(text string) string {
 			if stackLen > 0 || inComment {
 				//在字符串中啥也不干
 			} else {
-				if currentChar == ',' || currentChar == '(' {
+				if isOverLength && (currentChar == ',' || currentChar == '(') {
+					log.Printf("%v\n", stack)
 					// 插入一个\n
 					splitArr := make([]string, 0)
 					splitArr = append(splitArr, string(content[0:i+1]))

@@ -2,6 +2,7 @@ package main
 
 import (
 	"go/format"
+	"io/ioutil"
 	"log"
 	"testing"
 )
@@ -19,5 +20,16 @@ const HandleFullErr1 = QueueErrType("handleFullError, handleFullError, handleFul
 		t.Error(err)
 		return
 	}
+	log.Printf("ret:%s", fmtRet)
+
+}
+
+func Test_wrapLine2(t *testing.T) {
+	bts, err := ioutil.ReadFile("./wrapLineExample.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	ret := wrapLine(string(bts))
+	fmtRet, err := format.Source([]byte(ret))
 	log.Printf("ret:%s", fmtRet)
 }
