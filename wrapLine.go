@@ -37,10 +37,8 @@ func wrapLine(text string) string {
 
 			if currentChar == '`' || currentChar == '"' {
 				if stack.Len() != 0 && stack.Peek() == currentChar {
-					log.Printf("pop %v\n", string(currentChar))
 					stack.Pop()
 				} else {
-					log.Printf("push %v\n", string(currentChar))
 					stack.Push(currentChar)
 				}
 			}
