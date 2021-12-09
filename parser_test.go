@@ -25,11 +25,10 @@ type Abc *string
 // 一个滑动窗口的resender
 
 var hello int
-// Hello ...
 var Hello int
 
-// NewResendMsg ...
 func NewResendMsg(ctx context.Context, uuid string, timestamp int64, data interface{}) *ResenderMsg {
+	var CST = time.Now()
     r := &ResenderMsg{}
     r.Uuid = uuid
     r.Timestamp = timestamp
@@ -39,7 +38,6 @@ func NewResendMsg(ctx context.Context, uuid string, timestamp int64, data interf
 }
 
 
-// ResenderMsg ...
 type ResenderMsg struct {
     Data         interface{}
     Timestamp    int64
@@ -53,12 +51,10 @@ func (r *ResenderMsg) isSendCtx() context.Context {
     return r.isSend
 }
 
-// IsSendCancel ...
 func (r *ResenderMsg) IsSendCancel() {
     r.isSendCancel()
 }
 
-// NewMsgResender ...
 func NewMsgResender(ctx context.Context, subId int, sender func(data *ResenderMsg) error) *MsgResender {
     s := new(MsgResender)
     s.ctx = ctx
@@ -80,7 +76,6 @@ type MsgResender struct {
     ctx         context.Context
 }
 
-// UnSendCount ...
 func (m *MsgResender) UnSendCount() int64 {
     return m.unsendCount
 }
@@ -92,7 +87,6 @@ func (m *MsgResender) Wait() {
     }
 }
 
-// Put ...
 func (m *MsgResender) Put(key string, data *ResenderMsg) {
     data.Uuid = key
     atomic.AddInt64(&m.unsendCount, 1)
@@ -115,7 +109,6 @@ func (m *MsgResender) Pop(f func(key string, data *ResenderMsg) bool) bool {
     return ret
 }
 
-// IsSend ...
 func (m *MsgResender) IsSend(key string) {
     v, ok := m.dataMap.Load(key)
     if !ok {
@@ -132,7 +125,6 @@ func (m *MsgResender) IsSend(key string) {
     atomic.AddInt64(&m.unsendCount, -1)
 }
 
-// Maintenance ...
 func (m *MsgResender) Maintenance() {
     m.dataMap.Range(func(key, value interface{}) bool {
         data, ok := value.(*ResenderMsg)
@@ -160,5 +152,6 @@ func (m *MsgResender) Maintenance() {
     })
 }`
 	ret := AddCommentToText(text)
+	ret = AddCommentToText(ret)
 	log.Println(ret)
 }

@@ -23,7 +23,7 @@ func AddCommentToText(text string) string {
 		if isInComment {
 			inCommentMap[i] = true
 		}
-		trimLine := strings.Trim(line, " ")
+		trimLine := strings.Trim(line, " \t")
 		if strings.HasPrefix(trimLine, "//") {
 			// log.Printf("line:%v is in comment", i)
 			inCommentMap[i] = true
