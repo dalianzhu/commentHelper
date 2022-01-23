@@ -9,9 +9,9 @@ import (
 // ParseFunc ...
 func ParseFunc(text string) []*NeedCommentLine {
 	// func (r *ResenderMsg) IsSendCtx() context.Context {
-	re,
-		err := regexp.Compile(
-		`^func\s+([A-Z][a-zA-Z0-9_-]+)\(|^func\s*\([a-zA-Z0-9]+\s+[*a-zA-Z0-9]+\)\s+([A-Z][a-zA-Z0-9_-]+)`)
+	// func (s *DefaultPBConverter[T, U]) Convert(
+	re, err := regexp.Compile(
+		`^func\s+([A-Z][a-zA-Z0-9_-]+)\[*.+\(|^func\s*\([a-zA-Z0-9]+\s+[ *a-zA-Z0-9,\[\]\.]+\)\s+([A-Z][a-zA-Z0-9_-]+)`)
 	if err != nil {
 		log.Println(err)
 		return []*NeedCommentLine{}

@@ -1,13 +1,24 @@
 package main
 
 import (
-	"log"
 	"testing"
 )
 
 // TestExtractText ...
 func TestExtractText(t *testing.T) {
-	text := `package controller
+
+	ret := AddCommentToText(origin)
+	ret = AddCommentToText(ret)
+	// fmt.Println(ret)
+	for i := range []byte(ret) {
+		if ret[i] != []byte(checkRet)[i] {
+			t.Fail()
+			return
+		}
+	}
+}
+
+var origin = `package controller
 
 import (
     "context"
@@ -29,22 +40,12 @@ var Hello int
 
 func NewResendMsg(ctx context.Context, uuid string, timestamp int64, data interface{}) *ResenderMsg {
 	var CST = time.Now()
-    r := &ResenderMsg{}
-    r.Uuid = uuid
-    r.Timestamp = timestamp
-    r.Data = data
-    r.isSend, r.isSendCancel = context.WithCancel(ctx)
-    return r
 }
 
 
 type ResenderMsg struct {
     Data         interface{}
-    Timestamp    int64
-    SendTimes    int
     isSend       context.Context
-    isSendCancel context.CancelFunc
-    Uuid         string
 }
 
 func (r *ResenderMsg) isSendCtx() context.Context {
@@ -56,24 +57,11 @@ func (r *ResenderMsg) IsSendCancel() {
 }
 
 func NewMsgResender(ctx context.Context, subId int, sender func(data *ResenderMsg) error) *MsgResender {
-    s := new(MsgResender)
-    s.ctx = ctx
-    s.subId = subId
-    s.queue = make(chan *ResenderMsg, 50)
-    s.dataMap = sync.Map{}
-    s.unsendCount = 0
-    s.sender = sender
-    return s
 }
 
 // MsgResender ...
 type MsgResender struct {
     subId       int
-    dataMap     sync.Map
-    unsendCount int64
-    sender      func(data *ResenderMsg) error
-    queue       chan *ResenderMsg
-    ctx         context.Context
 }
 
 func (m *MsgResender) UnSendCount() int64 {
@@ -82,76 +70,140 @@ func (m *MsgResender) UnSendCount() int64 {
 
 // Wait ...
 func (m *MsgResender) Wait() {
-    for m.unsendCount != 0 {
-        time.Sleep(time.Second)
-    }
 }
 
 func (m *MsgResender) Put(key string, data *ResenderMsg) {
-    data.Uuid = key
-    atomic.AddInt64(&m.unsendCount, 1)
-    m.dataMap.Store(key, data)
-    select {
-    case <-m.ctx.Done():
-    case m.queue <- data:
-    }
 }
 
 // Pop ...
 func (m *MsgResender) Pop(f func(key string, data *ResenderMsg) bool) bool {
-    var ret bool
-    select {
-    case <-m.ctx.Done():
-    case d := <-m.queue:
-        ret = f(d.Uuid, d)
-        m.dataMap.Delete(d.Uuid)
-    }
-    return ret
 }
 
 func (m *MsgResender) IsSend(key string) {
-    v, ok := m.dataMap.Load(key)
-    if !ok {
-        log.Infof("MsgResender data not found:%v", key)
-        return
-    }
 
-    msg, ok := v.(*ResenderMsg)
-    if !ok {
-        log.Errorf("MsgResender data type error:%v", reflect.TypeOf(v))
-        return
-    }
-    msg.IsSendCancel()
-    atomic.AddInt64(&m.unsendCount, -1)
 }
 
 func (m *MsgResender) Maintenance() {
-    m.dataMap.Range(func(key, value interface{}) bool {
-        data, ok := value.(*ResenderMsg)
-        if !ok {
-            log.Errorf("MsgResender Maintenance type error:%v, subId:%v", reflect.TypeOf(value), m.subId)
-        }
-
-        select {
-        case <-data.IsSendCtx().Done():
-            // 已经发送成功的消息跳过去
-            return true
-        case <-m.ctx.Done():
-            return false
-        default:
-            if time.Now().Unix()-data.Timestamp > 10 {
-                data.SendTimes++
-                err := m.sender(data)
-                if err != nil {
-                    log.Errorf("MsgResender Maintenance send msg error:%v, subId:%v", err, m.subId)
-                    return false
-                }
-            }
-            return true
-        }
-    })
-}`
-	ret := AddCommentToText(text)
-	ret = AddCommentToText(ret)
-	log.Println(ret)
 }
+
+func NewCommonPBFilter[T proto.Message](ttype string,
+	vals []string, getters map[string]func(T) any) (*CommonPBFilter[T], error) {
+}
+
+type CommonPBFilter[TPB proto.Message] struct {
+	Getter func(TPB) any
+	vals   map[any]bool
+}
+
+func (c *CommonPBFilter[TPB]) DoFilter(data interfaces.BusinessData) (interfaces.BusinessData, error) {
+}
+func (s *DefaultPBConverter[T, U]) Convert(
+	msg interfaces.OriginMessage) (businessData interfaces.BusinessData, err error) {
+}
+
+type PbPtr[U any] interface {
+	*U // U:protoStruct T: *protoStruct
+	protoreflect.ProtoMessage
+}`
+var checkRet = `package controller
+
+import (
+    "context"
+    log "github.com/sirupsen/logrus"
+    "reflect"
+    "sync"
+    "sync/atomic"
+    "time"
+)
+
+type abc *string
+// Abc ...
+type Abc *string
+
+// 一个滑动窗口的resender
+
+var hello int
+// Hello ...
+var Hello int
+
+// NewResendMs ...
+func NewResendMsg(ctx context.Context, uuid string, timestamp int64, data interface{}) *ResenderMsg {
+// CST ...
+	var CST = time.Now()
+}
+
+
+// ResenderMsg ...
+type ResenderMsg struct {
+    Data         interface{}
+    isSend       context.Context
+}
+
+func (r *ResenderMsg) isSendCtx() context.Context {
+    return r.isSend
+}
+
+// IsSendCancel ...
+func (r *ResenderMsg) IsSendCancel() {
+    r.isSendCancel()
+}
+
+// NewMsgResender ...
+func NewMsgResender(ctx context.Context, subId int, sender func(data *ResenderMsg) error) *MsgResender {
+}
+
+// MsgResender ...
+type MsgResender struct {
+    subId       int
+}
+
+// UnSendCount ...
+func (m *MsgResender) UnSendCount() int64 {
+    return m.unsendCount
+}
+
+// Wait ...
+func (m *MsgResender) Wait() {
+}
+
+// Put ...
+func (m *MsgResender) Put(key string, data *ResenderMsg) {
+}
+
+// Pop ...
+func (m *MsgResender) Pop(f func(key string, data *ResenderMsg) bool) bool {
+}
+
+// IsSend ...
+func (m *MsgResender) IsSend(key string) {
+
+}
+
+// Maintenance ...
+func (m *MsgResender) Maintenance() {
+}
+
+// NewCommonPBFilter ...
+func NewCommonPBFilter[T proto.Message](ttype string,
+	vals []string, getters map[string]func(T) any) (*CommonPBFilter[T], error) {
+}
+
+// CommonPBFilter ...
+type CommonPBFilter[TPB proto.Message] struct {
+	Getter func(TPB) any
+	vals   map[any]bool
+}
+
+// DoFilter ...
+func (c *CommonPBFilter[TPB]) DoFilter(data interfaces.BusinessData) (interfaces.BusinessData, error) {
+}
+// Convert ...
+func (s *DefaultPBConverter[T, U]) Convert(
+	msg interfaces.OriginMessage) (businessData interfaces.BusinessData, err error) {
+}
+
+// PbPtr ...
+type PbPtr[U any] interface {
+	*U // U:protoStruct T: *protoStruct
+	protoreflect.ProtoMessage
+}`

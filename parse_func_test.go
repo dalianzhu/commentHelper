@@ -28,6 +28,13 @@ func (r *ResenderMsg) isSendCtx() context.Context {
 
 func (r *ResenderMsg) IsSendCancel() {
 }
+
+func NewCommonPBFilter[T proto.Message](ttype string,
+	vals []string, getters map[string]func(T) any) (*CommonPBFilter[T], error) {
+}
+
+func (c *CommonPBFilter[TPB]) DoFilter(data interfaces.BusinessData) (interfaces.BusinessData, error) {
+}
 `
 
 	willComments := ParseFunc(text)
