@@ -35,6 +35,9 @@ func NewCommonPBFilter[T proto.Message](ttype string,
 
 func (c *CommonPBFilter[TPB]) DoFilter(data interfaces.BusinessData) (interfaces.BusinessData, error) {
 }
+
+func TestCLBResolver_Build(t *testing.T) {
+}
 `
 
 	willComments := ParseFunc(text)
