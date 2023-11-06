@@ -41,7 +41,7 @@ func ParseFunc(text string) []*NeedCommentLine {
 	return willComments
 }
 
-func filterRegex(re *regexp.Regexp, lines []string) []*NeedCommentLine {
+func filterRegex(re *regexp.Regexp, lines []string, prefix string) []*NeedCommentLine {
 	willComments := make([]*NeedCommentLine, 0)
 	for i, line := range lines {
 		ret := re.FindAllStringSubmatch(line, -1)
@@ -58,7 +58,7 @@ func filterRegex(re *regexp.Regexp, lines []string) []*NeedCommentLine {
 
 				// log.Printf("func name:%v\n", funcName)
 				tp := new(NeedCommentLine)
-				tp.Name = funcName
+				tp.Name = prefix + funcName
 				tp.OriginLineNo = i
 				willComments = append(willComments, tp)
 			}

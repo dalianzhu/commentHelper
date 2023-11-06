@@ -1,15 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 )
 
 // TestExtractText ...
 func TestExtractText(t *testing.T) {
-
 	ret := AddCommentToText(origin)
 	ret = AddCommentToText(ret)
-	// fmt.Println(ret)
+	fmt.Println(ret)
 	for i := range []byte(ret) {
 		if ret[i] != []byte(checkRet)[i] {
 			t.Fail()
@@ -105,7 +105,8 @@ type PbPtr[U any] interface {
 	*U // U:protoStruct T: *protoStruct
 	protoreflect.ProtoMessage
 }`
-var checkRet = `package controller
+var checkRet = `// Package controller ...
+package controller
 
 import (
     "context"
@@ -126,7 +127,7 @@ var hello int
 // Hello ...
 var Hello int
 
-// NewResendMs ...
+// NewResendMsg ...
 func NewResendMsg(ctx context.Context, uuid string, timestamp int64, data interface{}) *ResenderMsg {
 // CST ...
 	var CST = time.Now()

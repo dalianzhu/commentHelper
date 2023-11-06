@@ -14,6 +14,6 @@ func ParseStruct(text string) []*NeedCommentLine {
 		return []*NeedCommentLine{}
 	}
 	lines := strings.Split(text, "\n")
-	willComments := filterRegex(re, lines)
+	willComments := filterRegex(re, lines, "")
 	return willComments
 }

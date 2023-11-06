@@ -43,6 +43,7 @@ func AddCommentToText(text string) string {
 	needCommentLines := ParseFunc(text)
 	needCommentLines = append(needCommentLines, ParseStruct(text)...)
 	needCommentLines = append(needCommentLines, ParseType(text)...)
+	needCommentLines = append(needCommentLines, ParsePackage(text)...)
 	sort.Slice(needCommentLines, func(i, j int) bool {
 		return needCommentLines[i].OriginLineNo < needCommentLines[j].OriginLineNo
 	})
